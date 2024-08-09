@@ -23,10 +23,6 @@ public class UserController {
         return userRepository.findById(username);
     }
 
-    @GetMapping("")
-    List<User> findAll() {
-        return userRepository.findAll();
-    }
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
     void registerUser(@RequestBody User user) {
