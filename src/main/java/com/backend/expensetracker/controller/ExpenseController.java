@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -21,18 +23,26 @@ public class ExpenseController {
 
     @PostMapping("")
     void create(@RequestBody Expense expense) {
+        expense.setCreated_at(LocalDateTime.now());
         expenseRepository.save(expense);
     }
 
     @GetMapping("/date")
     public List<Expense> getExpensesByUsernameBetweenDates(
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date startDate,
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate,
             Authentication authentication
     ) {
         String username = authentication.getName();
-        startDate = startDate.minusDays(1);
-        endDate = endDate.plusDays(1);
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        startDate = calendar.getTime();
+
+        calendar.setTime(endDate);
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        endDate = calendar.getTime();
+
         return expenseRepository.findByUsernameAndDateBetween(username, startDate, endDate);
     }
 
