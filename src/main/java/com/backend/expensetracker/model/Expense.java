@@ -17,7 +17,7 @@ public class Expense {
         private String category_id;
         private Double amount;
         private String description;
-        private LocalDateTime date;
+        private Date date;
         private LocalDateTime created_at;
 
         public String get_id() {
@@ -60,11 +60,11 @@ public class Expense {
                 this.description = description;
         }
 
-        public LocalDateTime getDate() {
+        public Date getDate() {
                 return date;
         }
 
-        public void setDate(LocalDateTime date) {
+        public void setDate(Date date) {
                 this.date = date;
         }
 
