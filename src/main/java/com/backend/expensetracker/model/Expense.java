@@ -13,7 +13,7 @@ import java.util.Date;
 public class Expense {
         @Id
         private String _id;
-        private String user_id;
+        private String username;
         private String category_id;
         private Double amount;
         private String description;
@@ -28,12 +28,12 @@ public class Expense {
                 this._id = _id;
         }
 
-        public String getUser_id() {
-                return user_id;
+        public String getUsername() {
+                return username;
         }
 
-        public void setUser_id(String user_id) {
-                this.user_id = user_id;
+        public void setUsername(String username) {
+                this.username = username;
         }
 
         public String getCategory_id() {

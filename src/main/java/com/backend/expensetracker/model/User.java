@@ -13,14 +13,6 @@ public class User {
     private String password;
     private LocalDateTime created_at;
 
-//    public String get_id() {
-//        return _id;
-//    }
-//
-//    public void set_id(String _id) {
-//        this._id = _id;
-//    }
-
     public String getUsername() {
         return username;
     }

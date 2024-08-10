@@ -7,5 +7,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ExpenseRepository extends MongoRepository<Expense, String> {
-    List<Expense> findByDateBetween(LocalDateTime startDate, LocalDateTime endDate);
+    List<Expense> findByUsernameAndDateBetween(String username, LocalDateTime startDate, LocalDateTime endDate);
+
+    List<Expense> findByUsername(String username);
+
 }
