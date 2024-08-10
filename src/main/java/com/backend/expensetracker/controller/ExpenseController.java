@@ -4,6 +4,7 @@ import com.backend.expensetracker.model.Expense;
 import com.backend.expensetracker.model.repositories.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,7 +14,7 @@ import java.util.List;
 
 @RestController
 @Service
-@RequestMapping("/api/expenses")
+@RequestMapping("/api/expenses/")
 public class ExpenseController {
     @Autowired
     private ExpenseRepository expenseRepository;
@@ -29,12 +30,22 @@ public class ExpenseController {
     }
 
     @GetMapping("/date")
-    public List<Expense> getExpensesBetweenDates(
+    public List<Expense> getExpensesByUsernameBetweenDates(
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate,
+            Authentication authentication
     ) {
+        String username = authentication.getName();
         startDate = startDate.minusDays(1);
         endDate = endDate.plusDays(1);
-        return expenseRepository.findByDateBetween(startDate, endDate);
+        return expenseRepository.findByUsernameAndDateBetween(username, startDate, endDate);
+    }
+
+    @GetMapping("/user-expenses")
+    public List<Expense> getExpenseByUsername(
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        return expenseRepository.findByUsername(authentication.getName());
     }
 }
