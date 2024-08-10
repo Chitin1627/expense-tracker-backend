@@ -14,15 +14,10 @@ import java.util.List;
 
 @RestController
 @Service
-@RequestMapping("/api/expenses/")
+@RequestMapping("/api/expenses")
 public class ExpenseController {
     @Autowired
     private ExpenseRepository expenseRepository;
-
-    @GetMapping("")
-    List<Expense> findAll() {
-        return expenseRepository.findAll();
-    }
 
     @PostMapping("")
     void create(@RequestBody Expense expense) {
