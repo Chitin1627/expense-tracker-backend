@@ -29,7 +29,7 @@ public class SecurityConfig {
         return httpSecurity
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request-> request
-                        .requestMatchers("/", "/register", "/authenticate").permitAll()
+                        .requestMatchers("/", "/register", "/api/users/authenticate").permitAll()
                         .anyRequest().authenticated()
                 )
                 //.formLogin(Customizer.withDefaults())
