@@ -37,8 +37,7 @@ public class UserController {
         userRepository.save(user);
     }
 
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    @GetMapping("/authenticate")
+    @PostMapping("/authenticate")
     boolean loginUser(@RequestBody User user) {
         Optional<User> opUser = findByUsername(user.getUsername());
         if(opUser.isEmpty()) {
@@ -50,5 +49,6 @@ public class UserController {
                 user.getPassword(),
                 dbUser.getPassword()
         );
+
     }
 }
