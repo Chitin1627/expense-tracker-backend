@@ -1,5 +1,6 @@
 package com.backend.expensetracker.controller;
 
+import com.backend.expensetracker.model.JwtToken;
 import com.backend.expensetracker.model.User;
 import com.backend.expensetracker.model.repositories.UserRepository;
 import com.backend.expensetracker.service.JWTService;
@@ -63,7 +64,7 @@ public class UserController {
     }
 
     @PostMapping("/validate-token")
-    boolean isTokenValid(@RequestBody String token) {
-        return !jwtService.isTokenExpired(token);
+    boolean isTokenValid(@RequestBody JwtToken token) {
+        return !jwtService.isTokenExpired(token.getToken());
     }
 }
