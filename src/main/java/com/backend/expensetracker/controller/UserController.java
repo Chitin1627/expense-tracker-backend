@@ -2,19 +2,18 @@ package com.backend.expensetracker.controller;
 
 import com.backend.expensetracker.model.User;
 import com.backend.expensetracker.model.repositories.UserRepository;
+import com.backend.expensetracker.service.JWTService;
 import com.backend.expensetracker.service.MyUserDetailsService;
 import com.backend.expensetracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -26,6 +25,9 @@ public class UserController {
 
     @Autowired
     private UserService service;
+
+    @Autowired
+    private JWTService jwtService;
 
     private Optional<User> findByUsername(String username) {
         return userRepository.findById(username);
@@ -60,4 +62,8 @@ public class UserController {
         return service.verify(user);
     }
 
+    @PostMapping("/validate-token")
+    boolean isTokenValid(@RequestBody String token) {
+        return !jwtService.isTokenExpired(token);
+    }
 }
