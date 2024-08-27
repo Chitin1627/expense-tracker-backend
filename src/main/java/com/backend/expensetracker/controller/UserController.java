@@ -1,6 +1,7 @@
 package com.backend.expensetracker.controller;
 
 import com.backend.expensetracker.model.JwtToken;
+import com.backend.expensetracker.model.TokenResponse;
 import com.backend.expensetracker.model.User;
 import com.backend.expensetracker.model.repositories.UserRepository;
 import com.backend.expensetracker.service.JWTService;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -30,37 +32,34 @@ public class UserController {
     @Autowired
     private JWTService jwtService;
 
-    private Optional<User> findByUsername(String username) {
-        return userRepository.findById(username);
+    private User findByUsername(String username) {
+        return userRepository.findByUsername(username);
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/register")
-    void registerUser(@RequestBody User user) {
-        Optional<User> opUser = findByUsername(user.getUsername());
-        if(opUser.isPresent()) {
+    TokenResponse registerUser(@RequestBody User user) {
+        User opUser = findByUsername(user.getUsername());
+        if(opUser!=null) {
             throw new RuntimeException("user already exists");
         }
+        User oldUser = new User();
+        oldUser.setUsername(user.getUsername());
+        oldUser.setPassword(user.getPassword());
         BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
         String encryptedPassword = bCryptPasswordEncoder.encode(user.getPassword());
         user.setPassword(encryptedPassword);
         user.setCreated_at(LocalDateTime.now());
         userRepository.save(user);
+        return loginUser(oldUser);
     }
 
     @PostMapping("/authenticate")
-    String loginUser(@RequestBody User user) {
-//        Optional<User> opUser = findByUsername(user.getUsername());
-//        if(opUser.isEmpty()) {
-//            return false;
-//        }
-//        BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
-//        User dbUser = opUser.get();
-//        return bCryptPasswordEncoder.matches(
-//                user.getPassword(),
-//                dbUser.getPassword()
-//        );
-        return service.verify(user);
+    TokenResponse loginUser(@RequestBody User user) {
+        String token = service.verify(user);
+        TokenResponse tokenResponse = new TokenResponse();
+        tokenResponse.setToken(token);
+        return tokenResponse;
     }
 
     @PostMapping("/validate-token")
