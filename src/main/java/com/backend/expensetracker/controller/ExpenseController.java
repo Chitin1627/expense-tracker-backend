@@ -1,5 +1,6 @@
 package com.backend.expensetracker.controller;
 
+import com.backend.expensetracker.model.DateUtils;
 import com.backend.expensetracker.model.Expense;
 import com.backend.expensetracker.model.repositories.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,5 +53,82 @@ public class ExpenseController {
     ) {
         String username = authentication.getName();
         return expenseRepository.findByUsername(authentication.getName());
+    }
+
+    @GetMapping("/user-expenses/current-month")
+    public List<Expense> getExpenseThisMonth(
+            Authentication authentication
+    ) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.MILLISECOND, -1);
+        Date startOfMonth = calendar.getTime();
+
+        calendar.setTime(new Date());
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.MONTH, 1);
+        Date endOfMonth = calendar.getTime();
+
+        System.out.println(startOfMonth);
+        System.out.println(endOfMonth);
+        String username = authentication.getName();
+
+        return expenseRepository.findByUsernameAndDateBetween(username, startOfMonth, endOfMonth);
+    }
+
+    @GetMapping("/user-expenses/last-six-months")
+    public List<Expense> getExpenseLast6Months(
+            Authentication authentication
+    ) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, -6);
+        Date startOfMonth = calendar.getTime();
+
+        calendar.setTime(new Date());
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        Date endOfMonth = calendar.getTime();
+
+        System.out.println(startOfMonth);
+        System.out.println(endOfMonth);
+        String username = authentication.getName();
+
+        return expenseRepository.findByUsernameAndDateBetween(username, startOfMonth, endOfMonth);
+    }
+
+    @GetMapping("/user-expenses/previous-month")
+    public List<Expense> getExpensePreviousMonth(
+            Authentication authentication
+    ) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        calendar.add(Calendar.MONTH, -1);
+        calendar.add(Calendar.MILLISECOND, -1);
+        Date startOfMonth = calendar.getTime();
+
+        calendar.setTime(new Date());
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        Date endOfMonth = calendar.getTime();
+
+        System.out.println(startOfMonth);
+        System.out.println(endOfMonth);
+        String username = authentication.getName();
+
+        return expenseRepository.findByUsernameAndDateBetween(username, startOfMonth, endOfMonth);
     }
 }
