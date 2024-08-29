@@ -43,7 +43,7 @@ public class ExpenseController {
         calendar.setTime(endDate);
         calendar.add(Calendar.DAY_OF_YEAR, 1);
         endDate = calendar.getTime();
-
+        System.out.println(endDate);
         return expenseRepository.findByUsernameAndDateBetween(username, startDate, endDate);
     }
 
@@ -130,5 +130,24 @@ public class ExpenseController {
         String username = authentication.getName();
 
         return expenseRepository.findByUsernameAndDateBetween(username, startOfMonth, endOfMonth);
+    }
+
+    @GetMapping("/user-expenses/date")
+    List<Expense> getExpensesByDate(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date,
+            Authentication authentication
+    ) {
+        String username = authentication.getName();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_YEAR, -1);
+        Date startDate = calendar.getTime();
+
+        calendar.setTime(date);
+        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        Date endDate = calendar.getTime();
+        System.out.println(endDate);
+
+        return expenseRepository.findByUsernameAndDateBetween(username, startDate, endDate);
     }
 }
