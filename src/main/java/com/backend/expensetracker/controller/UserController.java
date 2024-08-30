@@ -1,6 +1,7 @@
 package com.backend.expensetracker.controller;
 
 import com.backend.expensetracker.model.JwtToken;
+import com.backend.expensetracker.model.PasswordChangeRequest;
 import com.backend.expensetracker.model.TokenResponse;
 import com.backend.expensetracker.model.User;
 import com.backend.expensetracker.model.repositories.UserRepository;
@@ -10,6 +11,8 @@ import com.backend.expensetracker.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -65,5 +68,34 @@ public class UserController {
     @PostMapping("/validate-token")
     boolean isTokenValid(@RequestBody JwtToken token) {
         return !jwtService.isTokenExpired(token.getToken());
+    }
+
+    @PutMapping("/change-password")
+    public ResponseEntity<String> changePassword(
+            @RequestBody PasswordChangeRequest passwordChangeRequest,
+            Authentication authentication
+    ) {
+        Optional<User> user = userRepository.findById(authentication.getName());
+        if(user.isPresent()) {
+            BCryptPasswordEncoder bCryptPasswordEncoder = new BCryptPasswordEncoder();
+            User currUser = user.get();
+            if(bCryptPasswordEncoder.matches(
+                    passwordChangeRequest.getOldPassword(),
+                    currUser.getPassword()
+            )) {
+                String newPassword = bCryptPasswordEncoder.encode(
+                        passwordChangeRequest.getNewPassword()
+                );
+                currUser.setPassword(newPassword);
+                userRepository.save(currUser);
+                return ResponseEntity.ok("Password Changed Successfully");
+            }
+            else {
+                return ResponseEntity.status(401).body("Current password is incorrect");
+            }
+        }
+        else {
+            return ResponseEntity.status(404).body("User not found");
+        }
     }
 }

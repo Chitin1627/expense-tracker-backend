@@ -2,6 +2,7 @@ package com.backend.expensetracker.controller;
 
 import com.backend.expensetracker.model.DateUtils;
 import com.backend.expensetracker.model.Expense;
+import com.backend.expensetracker.model.PasswordChangeRequest;
 import com.backend.expensetracker.model.repositories.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -164,5 +165,4 @@ public class ExpenseController {
             return ResponseEntity.status(404).body("Expense not found");
         }
     }
-
 }
