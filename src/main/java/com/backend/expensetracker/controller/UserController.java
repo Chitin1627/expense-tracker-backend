@@ -1,9 +1,6 @@
 package com.backend.expensetracker.controller;
 
-import com.backend.expensetracker.model.JwtToken;
-import com.backend.expensetracker.model.PasswordChangeRequest;
-import com.backend.expensetracker.model.TokenResponse;
-import com.backend.expensetracker.model.User;
+import com.backend.expensetracker.model.*;
 import com.backend.expensetracker.model.repositories.UserRepository;
 import com.backend.expensetracker.service.JWTService;
 import com.backend.expensetracker.service.MyUserDetailsService;
@@ -37,6 +34,16 @@ public class UserController {
 
     private User findByUsername(String username) {
         return userRepository.findByUsername(username);
+    }
+
+    @GetMapping("/user-details")
+    UserDetailsResponse getUserDetails(Authentication authentication) {
+        String username = authentication.getName();
+        User user = findByUsername(username);
+        UserDetailsResponse userDetailsResponse = new UserDetailsResponse();
+        userDetailsResponse.setUsername(user.getUsername());
+        userDetailsResponse.setEmail(user.getEmail());
+        return userDetailsResponse;
     }
 
     @ResponseStatus(HttpStatus.CREATED)
