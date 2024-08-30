@@ -13,4 +13,6 @@ public interface ExpenseRepository extends MongoRepository<Expense, String> {
 
     List<Expense> findByUsername(String username);
 
+    void deleteByUsername(String username);
+
 }

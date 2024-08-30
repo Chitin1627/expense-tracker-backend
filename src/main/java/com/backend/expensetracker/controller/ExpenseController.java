@@ -5,15 +5,14 @@ import com.backend.expensetracker.model.Expense;
 import com.backend.expensetracker.model.repositories.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @RestController
 @Service
@@ -150,4 +149,20 @@ public class ExpenseController {
 
         return expenseRepository.findByUsernameAndDateBetween(username, startDate, endDate);
     }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteExpense(
+            @RequestParam String id,
+            Authentication authentication
+    ) {
+        Optional<Expense> expense = expenseRepository.findById(id);
+        if(expense.isPresent() && Objects.equals(expense.get().getUsername(), authentication.getName())) {
+            expenseRepository.deleteById(id);
+            return ResponseEntity.ok("Expense deleted successfully");
+        }
+        else {
+            return ResponseEntity.status(404).body("Expense not found");
+        }
+    }
+
 }
