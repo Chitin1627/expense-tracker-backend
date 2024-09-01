@@ -23,7 +23,8 @@ public class ExpenseController {
     private ExpenseRepository expenseRepository;
 
     @PostMapping("")
-    void create(@RequestBody Expense expense) {
+    void create(@RequestBody Expense expense, Authentication authentication) {
+        expense.setUsername(authentication.getName());
         expense.setCreated_at(LocalDateTime.now());
         expenseRepository.save(expense);
     }

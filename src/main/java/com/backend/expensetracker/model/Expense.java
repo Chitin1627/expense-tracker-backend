@@ -17,6 +17,7 @@ public class Expense {
         private String category_id;
         private Double amount;
         private String description;
+        private TransactionType type;
         private Date date;
         private LocalDateTime created_at;
 
@@ -58,6 +59,14 @@ public class Expense {
 
         public void setDescription(String description) {
                 this.description = description;
+        }
+
+        public TransactionType getType() {
+                return type;
+        }
+
+        public void setType(TransactionType type) {
+                this.type = type;
         }
 
         public Date getDate() {
