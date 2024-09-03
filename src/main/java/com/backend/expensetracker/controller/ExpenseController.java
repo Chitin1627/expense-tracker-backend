@@ -6,6 +6,7 @@ import com.backend.expensetracker.model.PasswordChangeRequest;
 import com.backend.expensetracker.model.repositories.ExpenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -88,8 +89,6 @@ public class ExpenseController {
         calendar.add(Calendar.MONTH, 1);
         Date endOfMonth = calendar.getTime();
 
-        System.out.println(startOfMonth);
-        System.out.println(endOfMonth);
         String username = authentication.getName();
 
         return expenseRepository.findByUsernameAndDateBetween(username, startOfMonth, endOfMonth);
@@ -190,6 +189,21 @@ public class ExpenseController {
         }
         else {
             return ResponseEntity.status(404).body("Expense not found");
+        }
+    }
+
+    @PutMapping("/edit")
+    public ResponseEntity<String> editExpense(
+            @RequestBody Expense expense,
+            Authentication authentication
+    ) {
+        expense.setUsername(authentication.getName());
+        try {
+            expenseRepository.save(expense);
+            return ResponseEntity.ok("Expense edited successfully");
+        }
+        catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 }
