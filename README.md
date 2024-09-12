@@ -36,7 +36,7 @@ This is the backend service for the [Expense Tracker application](https://github
 | Method | Endpoint        | Description               | Authorization |
 |--------|-----------------|---------------------------|---------------|
 | POST   | `/api/expenses`     | Creates an expense            | JWT Token            |
-| GET    | `/api/expenses/date?startDate="YYYY-MM-DD"endDate="YYYY-MM-DD"`  | Returns expenses between the given dates    | JWT Token            |
+| GET    | `/api/expenses/date?startDate="YYYY-MM-DD"&endDate="YYYY-MM-DD"`  | Returns expenses between the given dates    | JWT Token            |
 | GET    | `/api/expenses/user-expenses` | Returns all expenses of the user | JWT Token |
 | GET    | `/api/expenses/user-expenses/current-month` | Returns all expenses of the user for the current month | JWT Token |
 | GET    | `/api/expenses/user-expenses/last-six-months` | Returns all expenses of the user for the last 6 months | JWT Token |
