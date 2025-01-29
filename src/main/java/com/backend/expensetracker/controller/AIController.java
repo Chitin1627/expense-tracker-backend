@@ -29,9 +29,9 @@ public class AIController {
     @GetMapping("")
     public ResponseEntity<String> askQuestion(Authentication authentication) {
         UserSpending userSpending = userSpendingController.getUserSpending(authentication);
-        StringBuilder prompt = new StringBuilder("Analyze these expenses and suggest ways to cut costs under monthly limit");
+        StringBuilder prompt = new StringBuilder("Analyze these expenses and suggest ways to cut costs under monthly limit, ");
         prompt.append(userSpending.getMonthlyLimit());
-        prompt.append("point-wise and limit to 5 points: (everything is in Rupees)\n");
+        prompt.append(" point-wise and limit to 5 points: (everything is in Rupees)\n");
 
         List<Expense> expenses = expenseController.getExpenseLast6Months(authentication);
         List<Category> categoriesList = categoryController.findAll();

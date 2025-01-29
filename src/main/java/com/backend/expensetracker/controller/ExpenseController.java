@@ -104,7 +104,7 @@ public class ExpenseController {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MONTH, -6);
+        calendar.add(Calendar.MONTH, -5);
         Date startOfMonth = calendar.getTime();
 
         calendar.setTime(new Date());
@@ -113,7 +113,7 @@ public class ExpenseController {
         calendar.set(Calendar.MINUTE, 0);
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
+        calendar.add(Calendar.MONTH, 1);
         Date endOfMonth = calendar.getTime();
 
         System.out.println(startOfMonth);
