@@ -1,19 +1,19 @@
 package com.backend.expensetracker.model;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import java.time.LocalDateTime;
 
-@Setter
 @Getter
-@Document(collection = "users")
-public class User {
+@Setter
+@Document(collection = "debts")
+public class Debt {
     @Id
-    private String username;
-    private String email;
-    private String password;
+    private String _id;
+    private String userId;
+    private String otherParty;
+    private Double amount;
+    private boolean isReceivable;
     private LocalDateTime created_at;
 }
