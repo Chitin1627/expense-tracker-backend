@@ -1,33 +1,23 @@
 package com.backend.expensetracker.controller;
 
-import com.backend.expensetracker.model.DateUtils;
 import com.backend.expensetracker.model.Expense;
-import com.backend.expensetracker.model.PasswordChangeRequest;
-import com.backend.expensetracker.model.repositories.ExpenseRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.backend.expensetracker.service.ExpenseService;
+import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+@AllArgsConstructor
 @RestController
-@Service
 @RequestMapping("/api/expenses")
 public class ExpenseController {
-    @Autowired
-    private ExpenseRepository expenseRepository;
+    private ExpenseService expenseService;
 
     @PostMapping("")
     void create(@RequestBody Expense expense, Authentication authentication) {
-        expense.setUsername(authentication.getName());
-        expense.setCreated_at(LocalDateTime.now());
-        expenseRepository.save(expense);
+        expenseService.create(expense, authentication);
     }
 
     @GetMapping("/date")
@@ -36,145 +26,43 @@ public class ExpenseController {
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date endDate,
             Authentication authentication
     ) {
-        String username = authentication.getName();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(startDate);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
-        startDate = calendar.getTime();
-
-        calendar.setTime(endDate);
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        endDate = calendar.getTime();
-        System.out.println(endDate);
-        return expenseRepository.findByUsernameAndDateBetween(username, startDate, endDate);
+        return expenseService.getExpensesByUsernameBetweenDates(startDate, endDate, authentication);
     }
 
     @GetMapping("/user-expenses")
     public List<Expense> getExpenseByUsername(
             Authentication authentication
     ) {
-        String username = authentication.getName();
-        return expenseRepository.findByUsername(authentication.getName());
+        return expenseService.getExpenseByUsername(authentication);
     }
 
     @GetMapping("/user-expenses/current-month")
     public List<Expense> getExpenseThisMonth(
             Authentication authentication
     ) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MILLISECOND, -1);
-        Date startOfMonth = calendar.getTime();
-
-        calendar.setTime(new Date());
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MONTH, 1);
-        Date endOfMonth = calendar.getTime();
-
-        String username = authentication.getName();
-
-        return expenseRepository.findByUsernameAndDateBetween(username, startOfMonth, endOfMonth);
+        return expenseService.getExpenseThisMonth(authentication);
     }
 
     @GetMapping("/user-expenses/last-six-months")
     public List<Expense> getExpenseLast6Months(
             Authentication authentication
     ) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MONTH, -5);
-        Date startOfMonth = calendar.getTime();
-
-        calendar.setTime(new Date());
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MONTH, 1);
-        Date endOfMonth = calendar.getTime();
-
-        System.out.println(startOfMonth);
-        System.out.println(endOfMonth);
-        String username = authentication.getName();
-
-        return expenseRepository.findByUsernameAndDateBetween(username, startOfMonth, endOfMonth);
+        return expenseService.getExpenseLast6Months(authentication);
     }
 
     @GetMapping("/user-expenses/previous-month")
     public List<Expense> getExpensePreviousMonth(
             Authentication authentication
     ) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.MONTH, -1);
-        calendar.add(Calendar.MILLISECOND, -1);
-        Date startOfMonth = calendar.getTime();
-
-        calendar.setTime(new Date());
-        calendar.set(Calendar.DAY_OF_MONTH, 1);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        Date endOfMonth = calendar.getTime();
-
-        System.out.println(startOfMonth);
-        System.out.println(endOfMonth);
-        String username = authentication.getName();
-
-        return expenseRepository.findByUsernameAndDateBetween(username, startOfMonth, endOfMonth);
+        return expenseService.getExpensePreviousMonth(authentication);
     }
 
     @GetMapping("/user-expenses/date")
-    List<Expense> getExpensesByDate(
+    public List<Expense> getExpensesByDate(
             @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) Date date,
             Authentication authentication
     ) {
-        String username = authentication.getName();
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.DAY_OF_YEAR, -1);
-        Date startDate = calendar.getTime();
-
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        calendar.add(Calendar.DAY_OF_YEAR, 1);
-        Date endDate = calendar.getTime();
-        return expenseRepository.findByUsernameAndDateBetween(username, startDate, endDate);
+        return expenseService.getExpensesByDate(date, authentication);
     }
 
     @DeleteMapping("/delete")
@@ -182,14 +70,7 @@ public class ExpenseController {
             @RequestParam String id,
             Authentication authentication
     ) {
-        Optional<Expense> expense = expenseRepository.findById(id);
-        if(expense.isPresent() && Objects.equals(expense.get().getUsername(), authentication.getName())) {
-            expenseRepository.deleteById(id);
-            return ResponseEntity.ok("Expense deleted successfully");
-        }
-        else {
-            return ResponseEntity.status(404).body("Expense not found");
-        }
+        return expenseService.deleteExpense(id, authentication);
     }
 
     @PutMapping("/edit")
@@ -197,13 +78,6 @@ public class ExpenseController {
             @RequestBody Expense expense,
             Authentication authentication
     ) {
-        expense.setUsername(authentication.getName());
-        try {
-            expenseRepository.save(expense);
-            return ResponseEntity.ok("Expense edited successfully");
-        }
-        catch(Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-        }
+        return expenseService.editExpense(expense, authentication);
     }
 }

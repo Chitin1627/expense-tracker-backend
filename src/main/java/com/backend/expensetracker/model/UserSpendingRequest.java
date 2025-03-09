@@ -1,13 +1,10 @@
 package com.backend.expensetracker.model;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Setter
+@Getter
 public class UserSpendingRequest {
     Double newLimit;
-
-    public Double getNewLimit() {
-        return newLimit;
-    }
-
-    public void setNewLimit(Double newLimit) {
-        this.newLimit = newLimit;
-    }
 }
