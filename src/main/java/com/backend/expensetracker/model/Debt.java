@@ -14,6 +14,8 @@ public class Debt {
     private String userId;
     private String otherParty;
     private Double amount;
-    private boolean isReceivable;
+    private boolean receivable;
+    private boolean completed;
+    private String description;
     private LocalDateTime created_at;
 }

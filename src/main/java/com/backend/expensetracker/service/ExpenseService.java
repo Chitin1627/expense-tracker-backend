@@ -168,7 +168,7 @@ public class ExpenseService {
     }
 
     public ResponseEntity<String> deleteExpense(
-            @RequestParam String id,
+            String id,
             Authentication authentication
     ) {
         Optional<Expense> expense = expenseRepository.findById(id);
@@ -182,7 +182,7 @@ public class ExpenseService {
     }
 
     public ResponseEntity<String> editExpense(
-            @RequestBody Expense expense,
+            Expense expense,
             Authentication authentication
     ) {
         expense.setUsername(authentication.getName());
