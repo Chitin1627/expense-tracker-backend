@@ -22,7 +22,6 @@ public class DebtService {
     public Debt addDebt(Debt debt, Authentication authentication) {
         debt.setUserId(authentication.getName());
         debt.setCreated_at(LocalDateTime.now());
-        debt.setCompleted(false);
         return debtRepository.save(debt);
     }
 
