@@ -1,6 +1,7 @@
 package com.backend.expensetracker.controller;
 
 import com.backend.expensetracker.model.Expense;
+import com.backend.expensetracker.model.MonthlyExpense;
 import com.backend.expensetracker.service.ExpenseService;
 import lombok.AllArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -48,6 +49,13 @@ public class ExpenseController {
             Authentication authentication
     ) {
         return expenseService.getExpenseLast6Months(authentication);
+    }
+
+    @GetMapping("/user-expenses/monthly-last-six")
+    public List<MonthlyExpense> getMonthlyLastSixMonths(
+            Authentication authentication
+    ) {
+        return expenseService.getMonthlyLastSixMonths(authentication);
     }
 
     @GetMapping("/user-expenses/previous-month")

@@ -1,6 +1,7 @@
 package com.backend.expensetracker.service;
 
 import com.backend.expensetracker.model.Expense;
+import com.backend.expensetracker.model.MonthlyExpense;
 import com.backend.expensetracker.model.repositories.ExpenseRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.*;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -194,5 +196,38 @@ public class ExpenseService {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
+
+    public List<MonthlyExpense> getMonthlyLastSixMonths(Authentication authentication) {
+        List<MonthlyExpense> monthlyExpenses = new ArrayList<>();
+        Calendar now = Calendar.getInstance();
+
+        for (int i = 5; i >= 0; i--) {
+            Calendar startCal = (Calendar) now.clone();
+            startCal.add(Calendar.MONTH, -i);
+            startCal.set(Calendar.DAY_OF_MONTH, 1);
+            startCal.set(Calendar.HOUR_OF_DAY, 0);
+            startCal.set(Calendar.MINUTE, 0);
+            startCal.set(Calendar.SECOND, 0);
+            startCal.set(Calendar.MILLISECOND, 0);
+            Date startDate = startCal.getTime();
+
+            Calendar endCal = (Calendar) startCal.clone();
+            endCal.set(Calendar.DAY_OF_MONTH, endCal.getActualMaximum(Calendar.DAY_OF_MONTH));
+            endCal.set(Calendar.HOUR_OF_DAY, 23);
+            endCal.set(Calendar.MINUTE, 59);
+            endCal.set(Calendar.SECOND, 59);
+            endCal.set(Calendar.MILLISECOND, 999);
+            Date endDate = endCal.getTime();
+
+            List<Expense> monthlyList = getExpensesByUsernameBetweenDates(startDate, endDate, authentication);
+            double total = monthlyList.stream().mapToDouble(Expense::getAmount).sum();
+
+            String monthLabel = new SimpleDateFormat("MMM").format(startDate); // e.g., Jan, Feb
+            monthlyExpenses.add(new MonthlyExpense(monthLabel, total));
+        }
+
+        return monthlyExpenses;
+    }
+
 }
 
